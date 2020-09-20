@@ -61,6 +61,7 @@ jobs:
           -Dimage=haopoboy/mplatform:pr-${{ github.event.number }}
           -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
           -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
+          -Djib.container.ports=8080
       - name: Update deployment status
         uses: bobheadxi/deployments@master
         if: always() && github.head_ref
@@ -79,6 +80,7 @@ jobs:
           -Dimage=haopoboy/mplatform:dev
           -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
           -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
+          -Djib.container.ports=8080
       - name: Update deployment status
         uses: bobheadxi/deployments@master
         if: always() && github.ref =='refs/heads/dev'
