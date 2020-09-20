@@ -97,6 +97,7 @@ jobs:
           -Dimage=haopoboy/mplatform
           -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
           -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
+          -Djib.container.ports=8080
       - name: Update deployment status
         uses: bobheadxi/deployments@master
         if: always() && github.ref =='refs/heads/master'
