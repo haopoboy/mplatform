@@ -3,6 +3,8 @@
 
 name: CI and CD
 on:
+  pull_request:
+    branches: [ master, dev ]
   push:
     branches: [ master, dev ]
 
@@ -22,3 +24,43 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
     - name: Run the verify phase
       run: ./mvnw -B verify
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: |
+          target
+          pom.xml
+          .mvn
+          mvnw
+          
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v2
+    - name: Cache packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+    - name: Start deployment
+      uses: bobheadxi/deployments@master
+      id: deployment
+      with:
+        step: start
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: pr-${{github.event.number}}
+        ref: ${{ github.head_ref || github.ref }}
+    - name: Test maven
+      run: ./mvnw -v
+    - name: List artifact
+      run: ls -alh
+    - name: Update deployment status
+      uses: bobheadxi/deployments@master
+      if: always()
+      with:
+        step: finish
+        token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+        env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=${{github.event.number || ''}}
