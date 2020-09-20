@@ -57,7 +57,7 @@ jobs:
       - name: Deploy to DockerHub
         if: github.head_ref
         run: >
-          ./mvnw com.google.cloud.tools:jib-maven-plugin:2.0.0:build
+          ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
           -Dimage=haopoboy/mplatform
           -Dtags=pr-${{ github.event.number }}
           -Dusername=${{ secrets.DOCKER_USERNAME }}
