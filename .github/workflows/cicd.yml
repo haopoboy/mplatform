@@ -46,25 +46,31 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Start deployment
         uses: bobheadxi/deployments@master
-        if: ${{ github.head_ref }}
         id: deployment
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: pr-${{ github.event.number }}
-          ref: ${{ github.head_ref }}
-      - name: List artifact
-        run: ls -alh
-      - name: Test maven
-        run: ./mvnw -v
+          env: ${{ github.event.number || github.ref }}
+          ref: ${{ github.head_ref || github.ref }}
 
+      # PR
       - name: Update deployment status
         uses: bobheadxi/deployments@master
-        if: always()
+        if: always() && github.head_ref
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=pr-${{github.event.number}}
-
+          
+      # Push 
+      - name: Update deployment status
+        uses: bobheadxi/deployments@master
+        if: always() && !github.head_ref
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/
