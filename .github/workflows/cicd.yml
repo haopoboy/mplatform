@@ -60,8 +60,8 @@ jobs:
           ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
           -Dimage=haopoboy/mplatform
           -Dtags=pr-${{ github.event.number }}
-          -Dusername=${{ secrets.DOCKER_USERNAME }}
-          -Dpassword=${{ secrets.DOCKER_PASSWORD }}
+          -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
+          -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
       - name: Update deployment status
         uses: bobheadxi/deployments@master
         if: always() && github.head_ref
