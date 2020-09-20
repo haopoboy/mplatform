@@ -52,8 +52,16 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ github.event.number || github.ref }}
           ref: ${{ github.head_ref || github.ref }}
-
+          
       # PR
+      - name: Deploy to DockerHub
+        if: github.head_ref
+        run: >
+          ./mvnw com.google.cloud.tools:jib-maven-plugin:2.0.0:build
+          -Dimage=haopoboy/mplatform
+          -Dtags=pr-${{ github.event.number }}
+          -Dusername=${{ secrets.DOCKER_USERNAME }}
+          -Dpassword=${{ secrets.DOCKER_PASSWORD }}
       - name: Update deployment status
         uses: bobheadxi/deployments@master
         if: always() && github.head_ref
