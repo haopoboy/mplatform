@@ -12,7 +12,7 @@
   <groupId>io.github.haopoboy</groupId>
   <artifactId>mplatform</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>MProject</name>
+  <name>M Platform</name>
   <description>Platform for project M</description>
 
   <properties>
