@@ -23,7 +23,11 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Run the verify phase
-        run: ./mvnw -B verify
+        run: ./mvnw -B verify -Dmaven.test.failure.ignore=true
+      - name: Publish test report
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
