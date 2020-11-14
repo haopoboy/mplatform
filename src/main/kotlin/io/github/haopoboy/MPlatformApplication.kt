@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class MProjectApplication
+class MPlatformApplication
 
 fun main(args: Array<String>) {
-	runApplication<MProjectApplication>(*args)
+	runApplication<MPlatformApplication>(*args)
 }
