@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Install MicroK8s
     steps:
+      - uses: actions/checkout@v2
       - uses: balchua/microk8s-actions@v0.2.1
         with:
           channel: '1.18/stable'
@@ -35,9 +36,7 @@ jobs:
           kubectl get no
           kubectl get pods -A -o wide
       - name: Deploy
-        run: |
-          ls -al
-          kubectl apply -f kubernetes/simple.yaml
+        run: kubectl apply -f kubernetes/simple.yaml
       - name: Test web
         run: curl -s --retry 10 --retry-connrefused http://localhost
       - name: Test API
