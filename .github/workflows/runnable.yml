@@ -15,13 +15,13 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
       - name: Test web on container network
-        run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost
+        run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 5 --retry-connrefused http://localhost
       - name: Test API on container network
-        run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost/api
+        run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 5 --retry-connrefused http://localhost/api
       - name: Test web on host
-        run: curl -s --retry 10 --retry-connrefused http://localhost
+        run: curl -s --retry 5 --retry-connrefused http://localhost
       - name: Test API on host
-        run: curl -s --retry 10 --retry-connrefused http://localhost/api
+        run: curl -s --retry 5 --retry-connrefused http://localhost/api
   kubernetes:
     runs-on: ubuntu-latest
     name: Install MicroK8s
@@ -36,9 +36,11 @@ jobs:
           kubectl get no
           kubectl get pods -A -o wide
       - name: Deploy
-        run: kubectl apply -f kubernetes/simple.yaml
+        run: |
+          kubectl apply -f kubernetes/simple.yaml
+          kubectl get all
       - name: Test web
-        run: curl -s --retry 10 --retry-connrefused http://localhost
+        run: curl -s --retry 5 --retry-connrefused http://localhost
       - name: Test API
-        run: curl -s --retry 10 --retry-connrefused http://localhost/api
+        run: curl -s --retry 5 --retry-connrefused http://localhost/api
       
