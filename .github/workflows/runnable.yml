@@ -24,11 +24,15 @@ jobs:
         run: curl -s --retry 5 --retry-connrefused http://localhost/api
   microk8s:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s: [ 1.18 ]
     steps:
       - uses: actions/checkout@v2
       - uses: balchua/microk8s-actions@v0.2.1
         with:
-          channel: '1.18/stable'
+          channel: ${{ matrix.k8s }}/stable
           addons: '["dns", "rbac", "storage", "registry", "metrics-server"]'
       - name: Test
         run: |
