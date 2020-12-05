@@ -36,7 +36,7 @@ jobs:
           kubectl get pods -A -o wide
       - name: Deploy
         run: |
-          ls -al kubernetes
+          ls -al
           kubectl apply -f kubernetes/simple.yaml
       - name: Test web
         run: curl -s --retry 10 --retry-connrefused http://localhost
