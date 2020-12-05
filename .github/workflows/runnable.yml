@@ -20,7 +20,7 @@ jobs:
         run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost/api
   kubernetes:
     runs-on: ubuntu-latest
-    name: A job to install MicroK8s
+    name: Install MicroK8s
     steps:
     - uses: balchua/microk8s-actions@v0.2.1
       with:
