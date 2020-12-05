@@ -14,10 +14,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build the stack
         run: docker-compose up -d
-      - name: Test web
+      - name: Test web on container network
         run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost
-      - name: Test API
+      - name: Test API on container network
         run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost/api
+      - name: Test web on host
+        run: curl -s --retry 10 --retry-connrefused http://localhost
+      - name: Test API on host
+        run: curl -s --retry 10 --retry-connrefused http://localhost/api
   kubernetes:
     runs-on: ubuntu-latest
     name: Install MicroK8s
