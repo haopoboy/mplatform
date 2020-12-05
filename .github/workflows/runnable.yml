@@ -1,6 +1,10 @@
 
-name: Compose
-on: push
+name: Compose up
+on:
+  workflow_run:
+    workflows: ["CI and CD"]
+    types: 
+      - completed
 jobs:
   test:
     runs-on: ubuntu-latest
