@@ -1,5 +1,5 @@
 
-name: Compose up
+name: Runnable
 # Remove it after test
 on: push
 # Enable it on default branch
@@ -8,7 +8,7 @@ on: push
 #     types: 
 #       - completed
 jobs:
-  test:
+  compose:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,3 +18,15 @@ jobs:
         run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost
       - name: Test API
         run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost/api
+  kubernetes:
+    runs-on: ubuntu-latest
+    name: A job to install MicroK8s
+    steps:
+    - uses: balchua/microk8s-actions@v0.2.1
+      with:
+        channel: '1.18/stable'
+        addons: '["dns", "rbac", "storage", "registry", "metrics-server"]'
+    - name: Test MicroK8s
+      run: |
+        kubectl get no
+        kubectl get pods -A -o wide
