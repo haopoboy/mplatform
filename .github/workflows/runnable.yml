@@ -39,6 +39,7 @@ jobs:
         run: |
           kubectl apply -f kubernetes/simple.yaml
           kubectl get all
+          kubectl get ingress
       - name: Test web
         run: curl -s --retry 5 --retry-connrefused http://localhost
       - name: Test API
