@@ -1,10 +1,12 @@
 
 name: Compose up
-on:
-  workflow_run:
-    workflows: ["CI and CD"]
-    types: 
-      - completed
+# Remove it after test
+on: push
+# Enable it on default branch
+#   workflow_run:
+#     workflows: ["CI and CD"]
+#     types: 
+#       - completed
 jobs:
   test:
     runs-on: ubuntu-latest
