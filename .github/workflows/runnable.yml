@@ -9,6 +9,6 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
       - name: Test web
-        run: docker run --network container:app appropriate/curl -s --retry 10 --retry-connrefused http://localhost
+        run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost
       - name: Test API
-        run: docker run --network container:app appropriate/curl -s --retry 10 --retry-connrefused http://localhost/api
+        run: docker run --network container:mplatform_app_1 appropriate/curl -s --retry 10 --retry-connrefused http://localhost/api
