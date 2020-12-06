@@ -33,7 +33,7 @@ jobs:
       - uses: balchua/microk8s-actions@v0.2.1
         with:
           channel: ${{ matrix.k8s }}/stable
-          addons: '["dns", "rbac", "storage", "registry", "metrics-server"]'
+          addons: '["ingress", "dns", "rbac", "storage", "registry", "metrics-server"]'
       - name: Test
         run: |
           kubectl get no
