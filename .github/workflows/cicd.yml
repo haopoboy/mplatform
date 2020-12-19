@@ -59,7 +59,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ github.event.number || github.ref }}
+          env: ${{ steps.docker_meta.outputs.version }}
           ref: ${{ github.head_ref || github.ref }}
           
       - name: Deploy to DockerHub
