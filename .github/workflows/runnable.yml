@@ -53,6 +53,7 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ github.repository }}:${{ steps.docker_meta.outputs.version }}
         run: |
+          envsubst < kubernetes/simple.test.yaml | cat 
           envsubst < kubernetes/simple.test.yaml | kubectl apply -f -
           kubectl get all
           kubectl get ingress
