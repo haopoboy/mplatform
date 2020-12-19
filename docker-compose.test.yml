@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  app:
+    image: haopoboy/angular-material-starter:dev
+    ports:
+      - "80:80"
+  api:
+    image: ${DOCKER_IMAGE}
