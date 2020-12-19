@@ -33,19 +33,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: target
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: haopoboy/mplatform
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    strategy:
-      matrix:
-        images: ${{needs.build.docker_meta.outputs.tags}}
-    steps:
-      - uses: actions/checkout@v2
       - name: Download a Build Artifact
         uses: actions/download-artifact@v2
         with:
@@ -63,7 +61,7 @@ jobs:
       - name: Deploy to DockerHub
         run: >
           ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
-          -Dimage=${{ matrix.images }}
+          -Dimage=haopoboy/mplatform:${{ steps.docker_meta.outputs.version.main }}
           -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
           -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
           -Djib.container.ports=8080
@@ -75,5 +73,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=${{ matrix.images }}
+          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=${{ steps.docker_meta.outputs.version.main }}
           
