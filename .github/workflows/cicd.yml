@@ -33,10 +33,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: target
-          
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: haopoboy/mplatform
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        images: ${{needs.docker_meta.outputs.tags}}
     steps:
       - uses: actions/checkout@v2
       - name: Download a Build Artifact
@@ -44,11 +51,6 @@ jobs:
         with:
           name: artifact
           path: target
-      - name: Cache packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Start deployment
         uses: bobheadxi/deployments@master
         id: deployment
@@ -58,60 +60,20 @@ jobs:
           env: ${{ github.event.number || github.ref }}
           ref: ${{ github.head_ref || github.ref }}
           
-      # PR
-      - name: Deploy PR to DockerHub
-        if: github.head_ref
+      - name: Deploy to DockerHub
         run: >
           ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
-          -Dimage=haopoboy/mplatform:pr-${{ github.event.number }}
+          -Dimage=${{ matrix.images }}
           -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
           -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
           -Djib.container.ports=8080
       - name: Update deployment status
         uses: bobheadxi/deployments@master
-        if: always() && github.head_ref
+        if: always()
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=pr-${{github.event.number}}
-          
-      # Push dev
-      - name: Deploy dev to DockerHub
-        if: github.ref =='refs/heads/dev'
-        run: >
-          ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
-          -Dimage=haopoboy/mplatform:dev
-          -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
-          -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
-          -Djib.container.ports=8080
-      - name: Update deployment status
-        uses: bobheadxi/deployments@master
-        if: always() && github.ref =='refs/heads/dev'
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=dev
-          
-      # Push master
-      - name: Deploy master to DockerHub
-        if: github.ref =='refs/heads/master'
-        run: >
-          ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
-          -Dimage=haopoboy/mplatform
-          -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
-          -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
-          -Djib.container.ports=8080
-      - name: Update deployment status
-        uses: bobheadxi/deployments@master
-        if: always() && github.ref =='refs/heads/master'
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=latest
+          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=${{ matrix.images }}
           
