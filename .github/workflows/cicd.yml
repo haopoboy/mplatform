@@ -61,7 +61,7 @@ jobs:
       - name: Deploy to DockerHub
         run: >
           ./mvnw -B com.google.cloud.tools:jib-maven-plugin:2.0.0:build
-          -Dimage=haopoboy/mplatform:${{ steps.docker_meta.outputs.version.main }}
+          -Dimage=haopoboy/mplatform:${{ steps.docker_meta.outputs.version }}
           -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }}
           -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
           -Djib.container.ports=8080
@@ -73,5 +73,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=${{ steps.docker_meta.outputs.version.main }}
+          env_url: https://hub.docker.com/repository/docker/haopoboy/mplatform/tags?name=${{ steps.docker_meta.outputs.version }}
           
