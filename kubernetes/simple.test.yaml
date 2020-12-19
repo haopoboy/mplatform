@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ${APP_NAME}-ingress
+spec:
+  backend:
+    serviceName: ${APP_NAME}
+    servicePort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${APP_NAME}
+spec:
+  selector:
+    app: ${APP_NAME}
+  ports:
+    - port: 80
+      targetPort: http
+---
+# For testing on rancher k3s
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${APP_NAME}-node
+spec:
+  selector:
+    app: ${APP_NAME}
+  ports:
+    - port: 80
+      targetPort: http
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}-deployment
+  labels:
+    app: ${APP_NAME}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME} 
+    spec:
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "api"
+      containers:
+        - name: ${APP_NAME}
+          image: haopoboy/angular-material-starter:dev
+          imagePullPolicy: Always
+          ports:
+          - name: http
+            containerPort: 80
+        - name: api
+          image: ${DOCKER_IMAGE}
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
