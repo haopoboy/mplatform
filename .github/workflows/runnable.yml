@@ -1,12 +1,11 @@
 
 name: Runnable
-# Remove it after test
-on: push
-# Enable it on default branch
-#   workflow_run:
-#     workflows: ["CI and CD"]
-#     types: 
-#       - completed
+on:
+  workflow_run:
+    workflows: ["CI and CD"]
+    types: 
+      - completed
+        
 jobs:
   compose:
     runs-on: ubuntu-latest
