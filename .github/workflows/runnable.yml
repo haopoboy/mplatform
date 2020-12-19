@@ -51,7 +51,7 @@ jobs:
           kubectl get pods -A -o wide
       - name: Deploy
         env:
-          DOCKER_IMAGE: ${{ github.repository }}:${{ steps.docker_meta.outputs.version }}
+          DOCKER_IMAGE: ${{ github.repository }}:dev
         run: |
           envsubst < kubernetes/simple.test.yaml | cat 
           envsubst < kubernetes/simple.test.yaml | kubectl apply -f -
