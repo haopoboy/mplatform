@@ -49,11 +49,15 @@ jobs:
         run: |
           kubectl get no
           kubectl get pods -A -o wide
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: ${{ github.repository }}
       - name: Deploy
         env:
-          DOCKER_IMAGE: ${{ github.repository }}:dev
+          DOCKER_IMAGE: ${{ github.repository }}:${{ steps.docker_meta.outputs.version }}
         run: |
-          envsubst < kubernetes/simple.test.yaml | cat 
           envsubst < kubernetes/simple.test.yaml | kubectl apply -f -
           kubectl get all
           kubectl get ingress
