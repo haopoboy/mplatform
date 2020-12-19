@@ -1,0 +1,66 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: mplatform-ingress
+spec:
+  backend:
+    serviceName: mplatform
+    servicePort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mplatform
+spec:
+  selector:
+    app: mplatform
+  ports:
+    - port: 80
+      targetPort: http
+---
+# For testing on rancher k3s
+apiVersion: v1
+kind: Service
+metadata:
+  name: mplatform-node
+spec:
+  selector:
+    app: mplatform
+  ports:
+    - port: 80
+      targetPort: http
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mplatform-deployment
+  labels:
+    app: mplatform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mplatform
+  template:
+    metadata:
+      labels:
+        app: mplatform 
+    spec:
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "api"
+      containers:
+        - name: mplatform
+          image: haopoboy/angular-material-starter:dev
+          imagePullPolicy: Always
+          ports:
+          - name: http
+            containerPort: 80
+        - name: api
+          image: haopoboy/mplatform:dev
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+          
